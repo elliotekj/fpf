@@ -87,7 +87,7 @@ func readJSONLFile(path string) ([]models.Prompt, error) {
 	prompts := make([]models.Prompt, 0, 64)
 	scanner := bufio.NewScanner(file)
 
-	const maxCapacity = 1024 * 1024
+	const maxCapacity = 64 * 1024 * 1024
 	buf := make([]byte, maxCapacity)
 	scanner.Buffer(buf, maxCapacity)
 
@@ -123,7 +123,8 @@ func readJSONLFile(path string) ([]models.Prompt, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return nil, err
+		fmt.Fprintf(os.Stderr, "Warning: skipping file %s: %v\n", path, err)
+		return prompts, nil
 	}
 
 	return prompts, nil
